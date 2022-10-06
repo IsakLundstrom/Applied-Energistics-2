@@ -20,6 +20,7 @@ package appeng.blockentity.networking;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -28,6 +29,7 @@ import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.GridHelper;
 import appeng.api.networking.IGridNodeListener;
+import appeng.api.networking.IInWorldGridNodeHost;
 import appeng.api.networking.events.GridControllerChange;
 import appeng.api.networking.events.GridPowerStorageStateChanged;
 import appeng.api.networking.events.GridPowerStorageStateChanged.PowerEventType;
@@ -36,9 +38,12 @@ import appeng.api.util.AECableType;
 import appeng.block.networking.ControllerBlock;
 import appeng.block.networking.ControllerBlock.ControllerBlockState;
 import appeng.blockentity.grid.AENetworkPowerBlockEntity;
+import appeng.menu.MenuOpener;
+import appeng.menu.locator.MenuLocators;
+import appeng.menu.me.networktool.NetworkStatusMenu;
 import appeng.util.Platform;
 
-public class ControllerBlockEntity extends AENetworkPowerBlockEntity {
+public class ControllerBlockEntity extends AENetworkPowerBlockEntity implements IInWorldGridNodeHost {
 
     static {
         GridHelper.addNodeOwnerEventHandler(
@@ -149,4 +154,9 @@ public class ControllerBlockEntity extends AENetworkPowerBlockEntity {
     public boolean canBeRotated() {
         return false;
     }
+
+    public void openMenu(Player p) {
+        MenuOpener.open(NetworkStatusMenu.CONTROLLER_TYPE, p, MenuLocators.forBlockEntity(this));
+    }
+
 }

@@ -25,6 +25,7 @@ import net.minecraft.world.inventory.MenuType;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IInWorldGridNodeHost;
+import appeng.blockentity.networking.ControllerBlockEntity;
 import appeng.client.gui.me.networktool.NetworkStatusScreen;
 import appeng.core.sync.packets.NetworkStatusPacket;
 import appeng.items.contents.NetworkToolMenuHost;
@@ -36,17 +37,31 @@ import appeng.menu.implementations.MenuTypeBuilder;
  */
 public class NetworkStatusMenu extends AEBaseMenu {
 
-    public static final MenuType<NetworkStatusMenu> TYPE = MenuTypeBuilder
+    public static final MenuType<NetworkStatusMenu> TOOL_TYPE = MenuTypeBuilder
             .create(NetworkStatusMenu::new, NetworkToolMenuHost.class)
-            .build("networkstatus");
+            .build("tool_networkstatus");
+
+    public static final MenuType<NetworkStatusMenu> CONTROLLER_TYPE = MenuTypeBuilder
+            .create(NetworkStatusMenu::new, ControllerBlockEntity.class)
+            .build("controller_networkstatus");
 
     private IGrid grid;
     private int delay = 40;
 
     public NetworkStatusMenu(int id, Inventory ip, NetworkToolMenuHost host) {
-        super(TYPE, id, ip, host);
+        super(TOOL_TYPE, id, ip, host);
 
         var gridHost = host.getGridHost();
+        findNodesFromGridHost(gridHost);
+    }
+
+    public NetworkStatusMenu(int id, Inventory ip, ControllerBlockEntity host) {
+        super(CONTROLLER_TYPE, id, ip, host);
+
+        findNodesFromGridHost(host);
+    }
+
+    private void findNodesFromGridHost(IInWorldGridNodeHost gridHost) {
         if (gridHost != null) {
             for (var d : Direction.values()) {
                 this.findNode(gridHost, d);
